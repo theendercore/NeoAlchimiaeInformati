@@ -2,7 +2,7 @@ plugins {
     id 'java-library'
     id 'maven-publish'
     id 'net.neoforged.moddev' version '1.0.21'
-    id "org.jetbrains.kotlin.jvm" version ("2.0.21")
+    id "org.jetbrains.kotlin.jvm" version("2.0.21")
 }
 
 tasks.named('wrapper', Wrapper).configure {
@@ -22,6 +22,10 @@ repositories {
     maven {
         name = "Kotlin for Forge"
         setUrl("https://thedarkcolour.github.io/KotlinForForge/")
+    }
+    maven {
+        name = "Modrinth"
+        setUrl("https://api.modrinth.com/maven")
     }
 }
 
@@ -120,6 +124,8 @@ dependencies {
     // Since Kotlin is its own JVM language with its own standard library, a custom language loader needs to be used, i.e. KFF
     implementation("thedarkcolour:kotlinforforge-neoforge:$kff_version")
 
+    implementation("maven.modrinth:unfocused:0.1.67-neoforge")
+    implementation("maven.modrinth:alchimiae-magicae:0.3.5-1.21-neoforge")
     // Example optional mod dependency with JEI
     // The JEI API is declared for compile time use, while the full JEI artifact is used at runtime
     // compileOnly "mezz.jei:jei-${mc_version}-common-api:${jei_version}"
