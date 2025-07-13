@@ -27,6 +27,11 @@ repositories {
         name = "Modrinth"
         setUrl("https://api.modrinth.com/maven")
     }
+    maven {
+        name = "FzzyMaven";
+        setUrl("https://maven.fzzyhmstrs.me")
+    }
+
 }
 
 base {
@@ -126,6 +131,7 @@ dependencies {
 
     implementation("maven.modrinth:unfocused:0.1.67-neoforge")
     implementation("maven.modrinth:alchimiae-magicae:0.3.5-1.21-neoforge")
+    implementation("me.fzzyhmstrs:fzzy_config:0.6.9+1.21+neoforge")
     // Example optional mod dependency with JEI
     // The JEI API is declared for compile time use, while the full JEI artifact is used at runtime
     // compileOnly "mezz.jei:jei-${mc_version}-common-api:${jei_version}"

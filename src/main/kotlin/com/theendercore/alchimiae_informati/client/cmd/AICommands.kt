@@ -1,10 +1,12 @@
-package com.theendercore.alchimiae_informati.client
+package com.theendercore.alchimiae_informati.client.cmd
 
 import com.mojang.brigadier.CommandDispatcher
 import com.mojang.brigadier.arguments.StringArgumentType
 import com.mojang.brigadier.context.CommandContext
 import com.ssblur.alchimiae.alchemy.ClientAlchemyHelper
 import com.theendercore.alchimiae_informati.client.AlchimiaeInformatiClient.TAG
+import com.theendercore.alchimiae_informati.client.AlchimiaeInformatiClient.getAllKnowEffects
+import com.theendercore.alchimiae_informati.client.isUnknown
 import net.minecraft.commands.CommandBuildContext
 import net.minecraft.commands.CommandSourceStack
 import net.minecraft.commands.Commands.argument
@@ -13,7 +15,6 @@ import net.minecraft.core.registries.BuiltInRegistries
 import net.minecraft.network.chat.Component
 import net.minecraft.resources.ResourceLocation
 import net.neoforged.fml.loading.FMLLoader
-import kotlin.collections.iterator
 import kotlin.jvm.optionals.getOrNull
 
 object AICommands {
@@ -41,6 +42,9 @@ object AICommands {
 
         val optimalItems = literal("optimal").executes(::optimalItems).build()
         root.addChild(optimalItems)
+
+        val knowEffects = literal("know_effects").executes(::knowEffects).build()
+        root.addChild(knowEffects)
 
         val spreadsheet = literal("spreadsheet").executes(::spreadsheet).build()
         root.addChild(spreadsheet)
@@ -81,6 +85,22 @@ object AICommands {
     }
 
 
+    private fun knowEffects(it: CommandContext<CommandSourceStack>): Int {
+        val src = it.source
+        val effects = getAllKnowEffects()
+        if (effects.isEmpty()) {
+            src.sendSystemMessage(text("No effects known"))
+            return 0
+        }
+
+        src.sendSystemMessage(text("All know effects:"))
+        for (effect in effects) {
+            src.sendSystemMessage(text(" - ").append(effect.displayName))
+        }
+
+        return 1
+    }
+
     private fun contains(it: CommandContext<CommandSourceStack>, id: ResourceLocation): Int {
         val src = it.source
 
@@ -110,7 +130,7 @@ object AICommands {
         src.sendSystemMessage(text("Items missing effects: "))
         for (item in tag.map { it.value() }) {
             val effects = ClientAlchemyHelper.get(item)
-            val count = effects?.count { it == ClientAlchemyHelper.UNKNOWN }
+            val count = effects?.count(::isUnknown)
             if (count != null && count > 0) src.sendSystemMessage(text(" - $item $count"))
         }
 
